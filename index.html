@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Prediksi 2Nomor Berdasarkan Mimpi</title>
+<title>Mesin Prediksi 2D Berdasarkan Mimpi</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -56,28 +56,30 @@
 </head>
 <body>
 
-<h1>Prediksi 2Nomor Berdasarkan Mimpi</h1>
+<h1>Mesin Prediksi 2D Berdasarkan Mimpi</h1>
 
+<div class="card">
+    <h2>History Keluaran 2D</h2>
+    <input id="angkaHistory" type="number" placeholder="Masukkan beberapa 2D terakhir keluar" maxlength="2">
+    <button onclick="tambahHistory()">Tambah ke History</button>
+
+    <h3>Daftar History:</h3>
+    <div id="historyList"></div>
+</div>
+    
 <div class="card">
     <h2>Masukan Mimpi</h2>
     <textarea id="mimpi" placeholder="Contoh: mimpi melihat ikan besar" rows="3"></textarea>
     <button onclick="prediksi()">Prediksi Nomor</button>
 </div>
 
-<div class="card">
-    <h2>Input History Keluaran</h2>
-    <input id="angkaHistory" type="number" placeholder="Masukkan angka 2D contoh: 23" maxlength="2">
-    <button onclick="tambahHistory()">Tambah ke History</button>
-
-    <h3>Daftar History:</h3>
-    <div id="historyList"></div>
-</div>
 
 <div class="card">
     <h2>Hasil Prediksi</h2>
     <div id="hasil" class="prediksi-box">Belum ada prediksi</div>
 </div>
 
+    <footer>by PROxyz</footer>
 <script>
 // ===================
 // Mapping Mimpi 2D
