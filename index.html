@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Prediksi 2Nomor Berdasarkan Mimpi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f1f1f1;
+        padding: 20px;
+        max-width: 600px;
+        margin: auto;
+    }
+    h2 { margin-top: 40px; }
+    .card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        margin-bottom: 20px;
+    }
+    input, textarea, select, button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 8px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+    button {
+        background: #4CAF50;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    button:hover { background: #45a049; }
+    .history-item {
+        background: #eee;
+        padding: 8px;
+        border-radius: 8px;
+        margin: 5px 0;
+        display: flex;
+        justify-content: space-between;
+    }
+    .prediksi-box {
+        padding: 15px;
+        background: #222;
+        color: #0f0;
+        text-align: center;
+        font-size: 22px;
+        border-radius: 10px;
+        letter-spacing: 3px;
+    }
+</style>
+</head>
+<body>
+
+<h1>Prediksi 2Nomor Berdasarkan Mimpi</h1>
+
+<div class="card">
+    <h2>Masukan Mimpi</h2>
+    <textarea id="mimpi" placeholder="Contoh: mimpi melihat ikan besar" rows="3"></textarea>
+    <button onclick="prediksi()">Prediksi Nomor</button>
+</div>
+
+<div class="card">
+    <h2>Input History Keluaran</h2>
+    <input id="angkaHistory" type="number" placeholder="Masukkan angka 2D contoh: 23" maxlength="2">
+    <button onclick="tambahHistory()">Tambah ke History</button>
+
+    <h3>Daftar History:</h3>
+    <div id="historyList"></div>
+</div>
+
+<div class="card">
+    <h2>Hasil Prediksi</h2>
+    <div id="hasil" class="prediksi-box">Belum ada prediksi</div>
+</div>
+
+<script>
+// ===================
+// Mapping Mimpi 2D
+// ===================
+const mapping = {
+    "ikan": ["05","50","12","21"],
+    "ikan besar": ["06","60","23","32"],
+    "ular": ["27","72","33","39"],
+    "kucing": ["15","51","25","52"],
+    "anjing": ["14","41","24","42"],
+    "mobil": ["16","61","66","06"],
+    "rumah": ["01","10","44","45"],
+    "air": ["03","30","18","81"],
+    "uang": ["09","90","19","91"],
+};
+
+// ===================
+// Load / Save History
+// ===================
+function loadHistory() {
+    return JSON.parse(localStorage.getItem("history2D") || "[]");
+}
+
+function saveHistory(arr) {
+    localStorage.setItem("history2D", JSON.stringify(arr));
+}
+
+function renderHistory() {
+    const list = loadHistory();
+    const box = document.getElementById("historyList");
+    box.innerHTML = "";
+
+    list.forEach((num, i) => {
+        box.innerHTML += `
+            <div class="history-item">
+                <span>${num}</span>
+                <button style="width:60px;background:#d9534f" onclick="hapusHistory(${i})">Hapus</button>
+            </div>
+        `;
+    });
+}
+
+function tambahHistory() {
+    let val = document.getElementById("angkaHistory").value.padStart(2,"0");
+
+    if (!/^\d{2}$/.test(val)) {
+        alert("Masukkan angka 2D yang valid (00-99)");
+        return;
+    }
+
+    const list = loadHistory();
+    list.push(val);
+    saveHistory(list);
+    renderHistory();
+    document.getElementById("angkaHistory").value = "";
+}
+
+function hapusHistory(index) {
+    const list = loadHistory();
+    list.splice(index, 1);
+    saveHistory(list);
+    renderHistory();
+}
+
+// ===================
+// Fungsi Prediksi
+// ===================
+function textToKeywords(txt) {
+    return txt.toLowerCase()
+              .replace(/[^\w\s]/g," ")
+              .split(/\s+/)
+              .filter(x => x.length > 0);
+}
+
+function numerology(text) {
+    let sum = [...text.toLowerCase()]
+        .filter(c => c >= 'a' && c <= 'z')
+        .reduce((a,c) => a + (c.charCodeAt(0)-96), 0);
+
+    return String(sum % 100).padStart(2,"0");
+}
+
+function prediksi() {
+    let mimpi = document.getElementById("mimpi").value.trim();
+    if (mimpi === "") {
+        alert("Isi mimpi terlebih dahulu!");
+        return;
+    }
+
+    let keywords = textToKeywords(mimpi);
+    let hasil = [];
+    
+    // Ambil dari mapping
+    for (let key in mapping) {
+        if (mimpi.toLowerCase().includes(key)) {
+            hasil.push(...mapping[key]);
+        }
+    }
+
+    // Numerology
+    hasil.push(numerology(mimpi));
+
+    // Pengaruh history
+    let hist = loadHistory();
+    hist.forEach(h => {
+        if (!hasil.includes(h)) hasil.push(h);
+    });
+
+    // Acak + pilih 6 angka unik
+    hasil = [...new Set(hasil)];
+
+    let final = [];
+    for (let i=0; i<6 && hasil.length>0; i++) {
+        let rnd = Math.floor(Math.random() * hasil.length);
+        final.push(hasil[rnd]);
+        hasil.splice(rnd, 1);
+    }
+
+    // Masukkan 2 angka random tambahan (diversifikasi)
+    while (final.length < 8) {
+        final.push(String(Math.floor(Math.random() * 100)).padStart(2,"0"));
+    }
+
+    document.getElementById("hasil").textContent = final.join("   ");
+}
+
+// Render awal history
+renderHistory();
+</script>
+
+</body>
+</html>
